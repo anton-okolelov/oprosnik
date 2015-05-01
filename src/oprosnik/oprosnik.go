@@ -1,18 +1,18 @@
 package oprosnik
 
-import( 
-    "net/http"
+import (
 	"github.com/julienschmidt/httprouter"
 	"log"
+	"net/http"
 )
 
 func Start() {
-	
-    router := httprouter.New()
-    router.GET("/", index)
-    router.GET("/admin/", admin)
+
+	router := httprouter.New()
+	router.GET("/", index)
+	router.GET("/admin/", admin)
 	router.POST("/admin/save", adminSaveWords)
 	router.POST("/save-name", saveUserName)
 
-    log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

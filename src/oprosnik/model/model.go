@@ -1,10 +1,10 @@
-package model;
+package model
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 	"path/filepath"
-	"log"
 )
 
 func SaveWords(words []string) {
@@ -12,7 +12,7 @@ func SaveWords(words []string) {
 	f, err := os.Create("data/questions.json")
 	if err != nil {
 		path, _ := filepath.Abs(".")
-		log.Fatal("File  " + path, err)
+		log.Fatal("File  "+path, err)
 	}
 	f.Write(wordsJson)
 	f.Close()

@@ -1,14 +1,14 @@
 package oprosnik
 
-import(
-    "net/http"
-	"regexp"
+import (
+	"github.com/julienschmidt/httprouter"
+	"net/http"
 	"oprosnik/model"
-	"github.com/julienschmidt/httprouter"	
+	"regexp"
 )
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-    	render(w, "select-name.html")
+	render(w, "select-name.html")
 }
 
 func admin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -16,18 +16,17 @@ func admin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func adminSaveWords(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    text := r.FormValue("words")
-	
-	words := regexp.MustCompile("\r\n").Split(text, 1000)	
+	text := r.FormValue("words")
+
+	words := regexp.MustCompile("\r\n").Split(text, 1000)
 	model.SaveWords(words)
-	http.Redirect(w, r, "/admin", 302)	
+	http.Redirect(w, r, "/admin", 302)
 }
 
-
 func saveUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    text := r.FormValue("words")
-	
-	words := regexp.MustCompile("\r\n").Split(text, 1000)	
+	text := r.FormValue("words")
+
+	words := regexp.MustCompile("\r\n").Split(text, 1000)
 	model.SaveWords(words)
-	http.Redirect(w, r, "/admin", 302)	
+	http.Redirect(w, r, "/admin", 302)
 }

@@ -4,6 +4,6 @@ import (
 	"oprosnik"
 )
 
-func main(){
-	oprosnik.Start();
+func main() {
+	oprosnik.Start()
 }
