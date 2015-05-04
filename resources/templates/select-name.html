@@ -1,19 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
+{{define "head"}}
 	<style type="text/css">
 	    form, textarea, input {
 			display: block;
 		}
 		
 	</style>
-</head>
-<body>
+	<script>
+	window.onload = function() {
+		document.getElementById('name').focus()
+	}
+	</script>
+{{end}}
+
+{{define "body"}}
 	Введите имя
 	<form method="post" action="/save-name">
-		<input type="text" name="name">
+		<input id="name" type="text" name="name">
 		<input type="submit" value="Начать">
 	</form>
-</body>
-</html>
+{{end}}

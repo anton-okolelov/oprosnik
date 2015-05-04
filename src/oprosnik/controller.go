@@ -2,22 +2,60 @@ package oprosnik
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"math/rand"
 	"net/http"
 	"oprosnik/model"
 	"regexp"
+	"strconv"
+	"log"
 )
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session := model.GetUserSession(w, r)
 	if session.IsLogged {
-		w.Write([]byte("welcome, " + session.Name))
+		question, allAnswered := model.GetNextQuestion(*session)
+		var s1, s2 int
+		if rand.Intn(2) == 0 {
+			s1, s2 = question.Sentence1Id, question.Sentence2Id
+		} else {
+			s1, s2 = question.Sentence2Id, question.Sentence1Id
+		}
+		sentences := model.GetSentences()
+		if !allAnswered {
+			data := map[string]interface{}{
+				"name":      session.Name,
+				"id1":       s1,
+				"id2":       s2,
+				"sentence1": sentences[s1],
+				"sentence2": sentences[s2],
+			}
+			session.LastQuestion = question
+			session.Save()
+			renderExtended(w, "question.html", data)
+		} else {
+			w.Write([]byte("okay"))
+			log.Println("Answers:")
+			log.Println(session.Answers)
+		}
 	} else {
-		render(w, "select-name.html")
+		renderExtended(w, "select-name.html", nil)
 	}
 }
 
+// TODO обработка ошибок
+func saveAnswer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	session := model.GetUserSession(w, r)
+	chosenSentenceId, _ := strconv.Atoi(r.FormValue("answer"))
+	var answer model.Answer;
+	answer.Question = session.LastQuestion
+	answer.ChosenSentenceId = chosenSentenceId
+	session.Answers = append(session.Answers, answer)
+	session.Save()
+	http.Redirect(w, r, "/", 302)
+}
+
 func admin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	render(w, "admin-form.html")
+	renderExtended(w, "admin-form.html", nil)
 }
 
 func adminSaveWords(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

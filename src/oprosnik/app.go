@@ -14,6 +14,7 @@ func Start() {
 	router.GET("/admin/", admin)
 	router.POST("/admin/save", adminSaveWords)
 	router.POST("/save-name", saveUserName)
+	router.POST("/save-answer", saveAnswer)
 
 	log.Fatal(http.ListenAndServe(":8080", context.ClearHandler(router)))
 }

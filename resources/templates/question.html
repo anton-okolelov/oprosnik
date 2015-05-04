@@ -1,0 +1,22 @@
+{{define "head"}}
+	<style type="text/css">
+	    form, input[type=submit] {
+			display: block;
+		}
+		
+		form div {
+			margin: 1em
+		}
+		
+	</style>
+{{end}}
+
+{{define "body"}}
+	<div>Уважаемый, {{.name}}!</div>
+	<div>Выбeрите, что для вас важнее</div>
+	<form method="post" action="/save-answer">
+		<div><input type="radio" name="answer" value="{{.id1}}" id="s1"><label for="s1">{{.sentence1}}</label></div>
+		<div><input type="radio" name="answer" value="{{.id2}}" id="s2"><label for="s2">{{.sentence2}}</label></div>
+		<input type="submit" value="Далее">
+	</form>
+{{end}}
