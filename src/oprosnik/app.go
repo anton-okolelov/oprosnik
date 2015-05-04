@@ -1,6 +1,7 @@
 package oprosnik
 
 import (
+	"github.com/gorilla/context"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
@@ -14,5 +15,5 @@ func Start() {
 	router.POST("/admin/save", adminSaveWords)
 	router.POST("/save-name", saveUserName)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", context.ClearHandler(router)))
 }
