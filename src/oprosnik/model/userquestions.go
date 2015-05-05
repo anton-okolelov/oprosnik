@@ -1,13 +1,14 @@
 package model
 
 import (
-	//"log"
+	"log"
 	"math/rand"
+	"sort"
 )
 
 // берем случайные два утверждения, которые еще не спрашивали, чтобы задать вопрос
 // юзеру
-func GetNextQuestion(session Session) (question Question, allAnswered bool) {
+func GetNextQuestion(userAnswers []Answer) (question Question, allAnswered bool) {
 
 	sentences := GetSentences()
 	var questions []Question
@@ -19,15 +20,9 @@ func GetNextQuestion(session Session) (question Question, allAnswered bool) {
 
 			question := Question{sentence1, sentence2}
 
-			if alreadyAnswered(question, session) {
-				continue
+			if !question.inArray(userAnswers) && !question.inArray(questions) {
+				questions = append(questions, question)
 			}
-
-			if checkIfAlreadyAdded(questions, question) {
-				continue
-			}
-
-			questions = append(questions, question)
 		}
 	}
 
@@ -41,22 +36,17 @@ func GetNextQuestion(session Session) (question Question, allAnswered bool) {
 	return
 }
 
-func alreadyAnswered(question Question, session Session) bool {
-	answers := session.Answers
-
-	for _, answer := range answers {
-		if answer.Question.isEqualTo(question) {
-			return true
+func GenerateReportForAdmin(answers []Answer) {
+	sentences := GetSentences()
+	var rating = map[string]int{}
+	for id, sentence := range(sentences) {
+		rating[sentence] = 0
+		for _, answer := range answers {
+			if (answer.ChosenSentenceId == id) {
+				rating[sentence]++
+			}
 		}
 	}
-	return false
-}
-
-func checkIfAlreadyAdded(questions []Question, question Question) bool {
-	for _, q := range questions {
-		if q.isEqualTo(question) {
-			return true
-		}
-	}
-	return false
+	log.Println(rating)
+	
 }

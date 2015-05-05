@@ -7,11 +7,17 @@ package model
 import (
 	"github.com/gorilla/sessions"
 	//"log"
+	"encoding/gob"
 	"net/http"
 )
 
 var store = sessions.NewFilesystemStore("data/sessions", []byte("secretkey"))
-var gorillaSession *sessions.Session = nil
+
+func init() {
+	// магия, чтобы работала сериализация в сессию
+	gob.Register([]Answer{})
+	gob.Register(Question{})
+}
 
 type Session struct {
 	request        *http.Request
@@ -27,21 +33,24 @@ func (this *Session) Save() {
 	gorillaSession.Values["name"] = this.Name
 	gorillaSession.Values["answers"] = this.Answers
 	gorillaSession.Values["lastQuestion"] = this.LastQuestion
-	gorillaSession.Save(this.request, this.responseWriter)
+	err := gorillaSession.Save(this.request, this.responseWriter)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func getGorillaSession(r *http.Request) *sessions.Session {
-	if gorillaSession == nil {
-		gorillaSession, _ = store.Get(r, "sid")
-		gorillaSession.Options = &sessions.Options{
-			Path: "/",
-		}
+
+	gorillaSession, _ := store.Get(r, "sid")
+	gorillaSession.Options = &sessions.Options{
+		Path:   "/",
+		MaxAge: 0, // сессионная кука
 	}
 
 	return gorillaSession
 }
 
-// берем сессию из библиотеки gorillaSession и в итоге получаем Session уже с четкими
+// берем сессию из библиотеки gorillaSession и в итоге получаем нашу прослойку Session уже с четкими
 // типами, а не универсальными
 func GetUserSession(responseWriter http.ResponseWriter, request *http.Request) *Session {
 	gorillaSession := getGorillaSession(request)

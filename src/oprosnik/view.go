@@ -11,7 +11,7 @@ var templates = make(map[string]*template.Template)
 // компилируем шаблоны, причем каждый в паре с base.html,
 // чтобы организовать как бы наследование. Вообще, надо какую-то библиотеку найти
 func init() {
-	templateNames := []string{"admin-form.html", "select-name.html", "question.html"}
+	templateNames := []string{"admin-form.html", "select-name.html", "question.html", "okay.html"}
 	for _, templateName := range templateNames {
 		path := templatesPath + "/" + templateName
 		base := templatesPath + "/base.html"
