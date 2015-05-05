@@ -8,6 +8,8 @@ import (
 var templatesPath = "resources/templates"
 var templates = make(map[string]*template.Template)
 
+// компилируем шаблоны, причем каждый в паре с base.html,
+// чтобы организовать как бы наследование. Вообще, надо какую-то библиотеку найти
 func init() {
 	templateNames := []string{"admin-form.html", "select-name.html", "question.html"}
 	for _, templateName := range templateNames {
@@ -17,6 +19,7 @@ func init() {
 	}
 }
 
+// рендерим относледованный шаблон
 func renderExtended(w http.ResponseWriter, name string, data interface{}) {
 	templates[name].ExecuteTemplate(w, "base", data)
 }

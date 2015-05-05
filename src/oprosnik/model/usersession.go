@@ -1,8 +1,12 @@
 package model
 
+// Работа с сессиями.
+// сделана структура-прослойка Session, чтобы не делать type assertion каждый раз
+// из универcального типа interface{} (в либе gorilla/sessions все хранится в map[string]interface{})
+
 import (
 	"github.com/gorilla/sessions"
-	"log"
+	//"log"
 	"net/http"
 )
 
@@ -19,7 +23,6 @@ type Session struct {
 }
 
 func (this *Session) Save() {
-	log.Println(this.Name)
 	gorillaSession := getGorillaSession(this.request)
 	gorillaSession.Values["name"] = this.Name
 	gorillaSession.Values["answers"] = this.Answers
@@ -38,6 +41,8 @@ func getGorillaSession(r *http.Request) *sessions.Session {
 	return gorillaSession
 }
 
+// берем сессию из библиотеки gorillaSession и в итоге получаем Session уже с четкими
+// типами, а не универсальными
 func GetUserSession(responseWriter http.ResponseWriter, request *http.Request) *Session {
 	gorillaSession := getGorillaSession(request)
 

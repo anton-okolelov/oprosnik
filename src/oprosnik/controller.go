@@ -2,7 +2,6 @@ package oprosnik
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"math/rand"
 	"net/http"
 	"oprosnik/model"
 	"regexp"
@@ -15,12 +14,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session := model.GetUserSession(w, r)
 	if session.IsLogged {
 		question, allAnswered := model.GetNextQuestion(*session)
-		var s1, s2 int
-		if rand.Intn(2) == 0 {
-			s1, s2 = question.Sentence1Id, question.Sentence2Id
-		} else {
-			s1, s2 = question.Sentence2Id, question.Sentence1Id
-		}
+		s1, s2 := question.GetMixedSentenceIds()
 		sentences := model.GetSentences()
 		if !allAnswered {
 			data := map[string]interface{}{
@@ -70,6 +64,7 @@ func AdminSaveSentences(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	http.Redirect(w, r, "/admin", 302)
 }
 
+// Сохраняем в сессии имя юзера (недологин)
 func SaveUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	name := r.FormValue("name")
 
@@ -77,4 +72,14 @@ func SaveUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	session.Name = name
 	session.Save()
 	http.Redirect(w, r, "/", 302)
+}
+
+
+func StaticFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	http.FileServer(http.Dir("public")).ServeHTTP(w, r)
+}
+
+// обработка фатальных ошибок
+func PanicHandler(w http.ResponseWriter, r *http.Request, params interface{}) {
+	w.Write([]byte("Unexpected Error"))
 }

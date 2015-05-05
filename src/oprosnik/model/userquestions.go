@@ -5,6 +5,8 @@ import (
 	"math/rand"
 )
 
+// берем случайные два утверждения, которые еще не спрашивали, чтобы задать вопрос
+// юзеру
 func GetNextQuestion(session Session) (question Question, allAnswered bool) {
 
 	sentences := GetSentences()
