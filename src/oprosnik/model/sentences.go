@@ -10,7 +10,7 @@ import (
 
 var fileName = "data/sentences.json"
 
-// todo: обработка ошибок
+// TODO обработка ошибок
 func SaveSentences(sentences []string) {
 	sentencesJson, _ := json.Marshal(sentences)
 	f, err := os.Create(fileName)
@@ -22,7 +22,7 @@ func SaveSentences(sentences []string) {
 	f.Close()
 }
 
-// todo: обработка ошибок
+// TODO обработка ошибок
 func GetSentences() []string {
 	contents, _ := ioutil.ReadFile(fileName)
 	var result []string

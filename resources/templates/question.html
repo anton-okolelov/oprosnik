@@ -14,7 +14,7 @@
 {{define "body"}}
 	<div>Уважаемый, {{.name}}!</div>
 	<div>Выбeрите, что для вас важнее</div>
-	<form method="post" action="/save-answer">
+	<form method="post" action="/answer">
 		<div><input type="radio" name="answer" value="{{.id1}}" id="s1"><label for="s1">{{.sentence1}}</label></div>
 		<div><input type="radio" name="answer" value="{{.id2}}" id="s2"><label for="s2">{{.sentence2}}</label></div>
 		<input type="submit" value="Далее">

@@ -10,7 +10,8 @@ import (
 	"log"
 )
 
-func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+// главная страница
+func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session := model.GetUserSession(w, r)
 	if session.IsLogged {
 		question, allAnswered := model.GetNextQuestion(*session)
@@ -35,15 +36,16 @@ func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		} else {
 			w.Write([]byte("okay"))
 			log.Println("Answers:")
-			log.Println(session.Answers)
+			log.Println(session.Answers)			
 		}
 	} else {
 		renderExtended(w, "select-name.html", nil)
 	}
 }
 
+// Сохранение ответа пользователей
 // TODO обработка ошибок
-func saveAnswer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func SaveAnswer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	session := model.GetUserSession(w, r)
 	chosenSentenceId, _ := strconv.Atoi(r.FormValue("answer"))
 	var answer model.Answer;
@@ -54,11 +56,13 @@ func saveAnswer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	http.Redirect(w, r, "/", 302)
 }
 
-func admin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// главная странца админки
+func Admin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	renderExtended(w, "admin-form.html", nil)
 }
 
-func adminSaveWords(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// Сохраняем список утверждений
+func AdminSaveSentences(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	text := r.FormValue("words")
 
 	words := regexp.MustCompile("\r\n").Split(text, 1000)
@@ -66,7 +70,7 @@ func adminSaveWords(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 	http.Redirect(w, r, "/admin", 302)
 }
 
-func saveUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func SaveUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	name := r.FormValue("name")
 
 	session := model.GetUserSession(w, r)
