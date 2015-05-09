@@ -33,6 +33,3 @@ func GetNextQuestion(userAnswers []Answer) (question Question, allAnswered bool)
 
 	return
 }
-
-
-

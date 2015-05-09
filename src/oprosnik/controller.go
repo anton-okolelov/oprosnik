@@ -28,7 +28,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			session.Save()
 			renderExtended(w, "question.html", data)
 		} else {
-			model.GenerateReportForAdmin(session.Answers)
+			model.GenerateReportForAdmin(session.Name, session.Answers)
 			renderExtended(w, "okay.html", nil)
 		}
 	} else {
