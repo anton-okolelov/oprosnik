@@ -7,6 +7,8 @@ import (
 	"oprosnik/model"
 	"regexp"
 	"strconv"
+	"strings"
+
 )
 
 // главная страница
@@ -51,15 +53,16 @@ func SaveAnswer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 // главная странца админки
 func Admin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	renderExtended(w, "admin-form.html", nil)
+	params := &map[string]string{"sentences": strings.Join(model.GetSentences(), "\r\n")}
+	renderExtended(w, "admin-form.html", params)
 }
 
 // Сохраняем список утверждений
 func AdminSaveSentences(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	text := r.FormValue("words")
+	text := r.FormValue("sentences")
 
-	words := regexp.MustCompile("\r\n").Split(text, 1000)
-	model.SaveSentences(words)
+	sentences := regexp.MustCompile(`(\r|\n)+`).Split(text, 1000)
+	model.SaveSentences(sentences)
 	http.Redirect(w, r, "/admin", 302)
 }
 

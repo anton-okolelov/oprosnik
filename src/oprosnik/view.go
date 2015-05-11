@@ -2,7 +2,7 @@ package oprosnik
 
 import (
 	"net/http"
-	"text/template"
+	"html/template"
 )
 
 var templatesPath = "resources/templates"

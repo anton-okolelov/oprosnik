@@ -23,8 +23,9 @@ func main() {
 	// статика
 	router.GET("/css/*filepath", oprosnik.StaticFiles)
 	router.GET("/js/*filepath", oprosnik.StaticFiles)
+	router.GET("/bower_components/*filepath", oprosnik.StaticFiles)
 	
-	// обрабатываем фатальные ошибки
+	// обрабатываем фатальные ошибки, error 500
 	router.PanicHandler = oprosnik.PanicHandler
 
 	// запускаем сервер

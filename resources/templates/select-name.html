@@ -1,21 +1,19 @@
 {{define "head"}}
-	<style type="text/css">
-	    form, textarea, input {
-			display: block;
-		}
-		
-	</style>
-	<script>
-	window.onload = function() {
-		document.getElementById('name').focus()
-	}
+
+	<script type="text/javascript">
+	$(function(){
+		$("#name").focus()
+	});
 	</script>
 {{end}}
 
 {{define "body"}}
-	Введите имя
-	<form method="post" action="/save-name">
-		<input id="name" type="text" name="name" required>
-		<input type="submit" value="Начать">
+	
+	<form class="form-inline" method="post" action="/save-name">
+	<div class="form-group">
+		<label class="sr-only" for="name">Введите имя</label>
+		<input id="name" class="form-control" type="text" name="name" placeholder="Имя" required>
+	</div>
+		<input type="submit" value="Начать" class="btn btn-primary">
 	</form>
 {{end}}

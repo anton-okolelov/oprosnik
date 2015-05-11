@@ -45,6 +45,7 @@ func getGorillaSession(r *http.Request) *sessions.Session {
 	gorillaSession.Options = &sessions.Options{
 		Path:   "/",
 		MaxAge: 0, // сессионная кука
+		HttpOnly: true,
 	}
 
 	return gorillaSession

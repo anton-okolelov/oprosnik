@@ -1,21 +1,14 @@
 {{define "head"}}
-	<style type="text/css">
-	    form, textarea, input {
-			display: block;
-		}
-		
-		textarea {
-			width: 500px;
-			height: 600px;			
-			margin-bottom: 20px;
-			
-		}
-	</style>
+
 {{end}}
 
 {{define "body"}}
+
 	<form method="post" action="/admin/save">
-		<textarea name="words"></textarea>
-		<input type="submit" value="Сохранить">
+		<div class="form-group">
+			<label for="sentences">Высказывания для сравнения</label>
+			<textarea id="sentences" rows="20" class="form-control" name="sentences" >{{.sentences}}</textarea>
+		</div>
+		<input type="submit" value="Сохранить"  class="btn btn-primary btn-lg">
 	</form>
 {{end}}
