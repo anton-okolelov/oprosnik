@@ -12,8 +12,8 @@ import (
 
 
 func createDirs() {
-	os.MkdirAll("data/sessions")
-	os.MkdirAll("public/results")
+	os.MkdirAll("data/sessions", 0700) 
+	os.MkdirAll("public/results", 0700)
 }
 
 func main() {
