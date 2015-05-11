@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"time"
-	"regexp"
 )
 
 type keyval struct {
@@ -49,8 +49,7 @@ func GenerateReportForAdmin(name string, answers []Answer) {
 	name = reg.ReplaceAllString(name, "_")
 
 	t := time.Now()
-	
-	
+
 	fileName := name + "_" + fmt.Sprintf("%02d.%02d.%d_%02d-%02d",
 		t.Day(), t.Month(), t.Year(),
 		t.Hour(), t.Minute()) + ".txt"

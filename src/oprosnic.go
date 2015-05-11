@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"oprosnik/model"
 	"os"
+	"oprosnik/errors"
 )
 
 
@@ -15,6 +16,7 @@ func createDirs() {
 	os.MkdirAll("data/sessions", 0700) 
 	os.MkdirAll("public/results", 0700)
 }
+
 
 func main() {
 	log.Println("Starting...")
@@ -39,7 +41,7 @@ func main() {
 	router.GET("/bower_components/*filepath", oprosnik.StaticFiles)
 	
 	// обрабатываем фатальные ошибки, error 500
-	router.PanicHandler = oprosnik.PanicHandler
+	router.PanicHandler = errors.PanicHandler
 
 	// запускаем сервер
 	log.Fatal(http.ListenAndServe(":8080", context.ClearHandler(router)))

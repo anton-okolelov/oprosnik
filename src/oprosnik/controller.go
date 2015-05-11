@@ -2,7 +2,6 @@ package oprosnik
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"log"
 	"net/http"
 	"oprosnik/model"
 	"regexp"
@@ -12,8 +11,8 @@ import (
 
 // главная страница
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	 model.DestroySession(w, r)
-	
+	model.DestroySession(w, r)
+
 	renderExtended(w, "select-name.html", nil)
 }
 
@@ -27,7 +26,6 @@ func SaveUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	http.Redirect(w, r, "/question", 302)
 }
 
-
 func Question(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session := model.GetUserSession(w, r)
 	if !session.IsLogged {
@@ -39,18 +37,17 @@ func Question(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	sentences := model.GetSentences()
 	if totalCount > answeredCount && totalCount > 0 {
 		data := map[string]interface{}{
-			"name":      session.Name,
-			"id1":       s1,
-			"id2":       s2,
-			"sentence1": sentences[s1],
-			"sentence2": sentences[s2],
+			"name":            session.Name,
+			"id1":             s1,
+			"id2":             s2,
+			"sentence1":       sentences[s1],
+			"sentence2":       sentences[s2],
 			"progressPercent": 100.0 * answeredCount / totalCount,
 		}
 		session.LastQuestion = question
 		session.Save()
 		renderExtended(w, "question.html", data)
 	} else {
-		model.GenerateReportForAdmin(session.Name, session.Answers)
 		renderExtended(w, "okay.html", nil)
 	}
 
@@ -66,6 +63,10 @@ func SaveAnswer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	answer.ChosenSentenceId = chosenSentenceId
 	session.Answers = append(session.Answers, answer)
 	session.Save()
+	_, answeredCount, totalCount := model.GetNextQuestion(session.Answers)
+	if totalCount == answeredCount {
+		model.GenerateReportForAdmin(session.Name, session.Answers)
+	}
 	http.Redirect(w, r, "/question", 302)
 }
 
@@ -93,8 +94,3 @@ func StaticFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	http.FileServer(http.Dir("public")).ServeHTTP(w, r)
 }
 
-// обработка фатальных ошибок
-func PanicHandler(w http.ResponseWriter, r *http.Request, error interface{}) {
-	log.Println(error)
-	w.Write([]byte("Unexpected Error"))
-}

@@ -3,22 +3,26 @@ package model
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
+	"oprosnik/errors"
 	"os"
-	"path/filepath"
+	"strings"
 )
 
 var fileName = "data/sentences.json"
 
 // сохраняем утверждения в json-файл
-// TODO обработка ошибок
 func SaveSentences(sentences []string) {
-	sentencesJson, _ := json.Marshal(sentences)
-	f, err := os.Create(fileName)
-	if err != nil {
-		path, _ := filepath.Abs(".")
-		log.Fatal("File  "+path, err)
+	nonEmptySentences := []string{}
+	for _, s := range sentences {
+		s = strings.TrimSpace(s)
+		if s != "" {
+			nonEmptySentences = append(nonEmptySentences, s)
+		}
 	}
+	sentencesJson, err := json.Marshal(sentences)
+	errors.PanicWhenError(err)
+	f, err := os.Create(fileName)
+	errors.PanicWhenError(err)
 	f.Write(sentencesJson)
 	f.Close()
 }
