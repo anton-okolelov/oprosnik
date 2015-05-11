@@ -12,6 +12,13 @@
 {{end}}
 
 {{define "body"}}
+	<div class="progress">
+	  <div class="progress-bar" role="progressbar" aria-valuenow="{{.progressPercent}}"
+	  aria-valuemin="0" aria-valuemax="100" style="width:{{.progressPercent}}%">
+	    {{.progressPercent}}%
+	  </div>
+	</div>
+	
 	<p>Уважаемый, {{.name}}!<br>
 	Выбeрите, что для вас важнее</p>
 	<form method="post" action="/answer">

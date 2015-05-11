@@ -7,11 +7,19 @@ import (
 	"log"
 	"net/http"
 	"oprosnik/model"
+	"os"
 )
 
 
+func createDirs() {
+	os.MkdirAll("data/sessions")
+	os.MkdirAll("public/results")
+}
+
 func main() {
 	log.Println("Starting...")
+
+	createDirs()
 
 	// в отдельном потоке периодически чистим старые сессии 
 	go model.SessionGarbageCollector()

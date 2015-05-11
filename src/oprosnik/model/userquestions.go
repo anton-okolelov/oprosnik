@@ -6,7 +6,7 @@ import (
 
 // берем случайные два утверждения, которые еще не спрашивали, чтобы задать вопрос
 // юзеру
-func GetNextQuestion(userAnswers []Answer) (question Question, allAnswered bool) {
+func GetNextQuestion(userAnswers []Answer) (question Question, answeredCount int, totalCount int) {
 
 	sentences := GetSentences()
 	var questions []Question
@@ -24,11 +24,11 @@ func GetNextQuestion(userAnswers []Answer) (question Question, allAnswered bool)
 		}
 	}
 
+	answeredCount = len(userAnswers)
+	totalCount = len(userAnswers) + len(questions)
+
 	if len(questions) > 0 {
 		question = questions[rand.Intn(len(questions))]
-		allAnswered = false
-	} else {
-		allAnswered = true
 	}
 
 	return

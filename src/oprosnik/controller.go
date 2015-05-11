@@ -34,16 +34,17 @@ func Question(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.Redirect(w, r, "/", 302)
 	}
 
-	question, allAnswered := model.GetNextQuestion(session.Answers)
+	question, answeredCount, totalCount := model.GetNextQuestion(session.Answers)
 	s1, s2 := question.GetMixedSentenceIds()
 	sentences := model.GetSentences()
-	if !allAnswered {
+	if totalCount > answeredCount && totalCount > 0 {
 		data := map[string]interface{}{
 			"name":      session.Name,
 			"id1":       s1,
 			"id2":       s2,
 			"sentence1": sentences[s1],
 			"sentence2": sentences[s2],
+			"progressPercent": 100.0 * answeredCount / totalCount,
 		}
 		session.LastQuestion = question
 		session.Save()
