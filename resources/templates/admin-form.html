@@ -3,12 +3,17 @@
 {{end}}
 
 {{define "body"}}
-
+	<h2>Результаты</h2>
+	<p><a href="/results/" class="btn btn-primary">Посмотреть результаты</a></p>
+	<form method="post" action="/admin/cleanresults">
+		<input type="submit" class="btn btn-default" value="Очистить результаты">
+	</form>
+	<h2>Изменить высказывания</h2>
 	<form method="post" action="/admin/save">
 		<div class="form-group">
-			<label for="sentences">Высказывания для сравнения</label>
-			<textarea id="sentences" rows="20" class="form-control" name="sentences" >{{.sentences}}</textarea>
+			<label for="sentences">Высказывания для сравнения, по одному на строке</label>
+			<textarea id="sentences" required rows="20" class="form-control" name="sentences" >{{.sentences}}</textarea>
 		</div>
-		<input type="submit" value="Сохранить"  class="btn btn-primary btn-lg">
+		<input type="submit" value="Сохранить"  class="btn btn-default btn-lg">
 	</form>
 {{end}}

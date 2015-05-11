@@ -1,11 +1,12 @@
 package model
 
 import (
+	"fmt"
 	"io/ioutil"
-	"log"
+	"os"
+	"path/filepath"
 	"sort"
 	"time"
-	"fmt"
 )
 
 type keyval struct {
@@ -43,7 +44,33 @@ func GenerateReportForAdmin(name string, answers []Answer) {
 		report += fmt.Sprintf("%d", keyval.Score) + "\t" + keyval.Sentence + "\r\n"
 	}
 
-	log.Println(report)
+	t := time.Now()
+	fileName := fmt.Sprintf("%d-%02d-%02d_%02d-%02d-%02d",
+		t.Year(), t.Month(), t.Day(),
+		t.Hour(), t.Minute(), t.Second()) + ".txt"
+	ioutil.WriteFile("public/results/"+fileName, []byte(report), 0600)
+}
 
-	ioutil.WriteFile("data/results"+time.Now().Format(time.RFC3339)+".txt", []byte(report), 0600)
+func DeleteReports() {
+	dirname := "public/results/"
+
+	d, err := os.Open(dirname)
+	if err != nil {
+		panic(err)
+	}
+	defer d.Close()
+
+	files, err := d.Readdir(-1)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, file := range files {
+
+		if file.Mode().IsRegular() {
+			if filepath.Ext(file.Name()) == ".txt" {
+				os.Remove(dirname + file.Name())
+			}
+		}
+	}
 }

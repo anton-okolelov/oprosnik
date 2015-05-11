@@ -5,10 +5,13 @@ package model
 // из универcального типа interface{} (в либе gorilla/sessions все хранится в map[string]interface{})
 
 import (
-	"github.com/gorilla/sessions"
-	//"log"
 	"encoding/gob"
+	"github.com/gorilla/sessions"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
 )
 
 var store = sessions.NewFilesystemStore("data/sessions", []byte("secretkey"))
@@ -29,7 +32,7 @@ type Session struct {
 }
 
 func (this *Session) Save() {
-	gorillaSession := getGorillaSession(this.request)
+	gorillaSession := getGorillaSession(this.request, false)
 	gorillaSession.Values["name"] = this.Name
 	gorillaSession.Values["answers"] = this.Answers
 	gorillaSession.Values["lastQuestion"] = this.LastQuestion
@@ -39,23 +42,54 @@ func (this *Session) Save() {
 	}
 }
 
-func getGorillaSession(r *http.Request) *sessions.Session {
-
+func getGorillaSession(r *http.Request, isNew bool) *sessions.Session {
+	var maxAge int
+	if isNew {
+		maxAge = -1
+	} else {
+		maxAge = 0
+	}
 	gorillaSession, _ := store.Get(r, "sid")
 	gorillaSession.Options = &sessions.Options{
 		Path:   "/",
-		MaxAge: 0, // сессионная кука
-		HttpOnly: true,
+		MaxAge: maxAge, // сессионная кука
 	}
 
 	return gorillaSession
 }
 
+func DestroySession(responseWriter http.ResponseWriter, request *http.Request) {
+	gorillaSession := getGorillaSession(request, true)
+	err := gorillaSession.Save(request, responseWriter)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func deleteOldFiles(path string, f os.FileInfo, err error) (e error) {
+	maxTime := time.Now().Add(-3600 * time.Second)
+	if strings.HasPrefix(f.Name(), "session_") && f.ModTime().Before(maxTime) {
+		os.Remove(path)
+	}
+	return
+}
+
+func DeleteOldSessions() {
+	path := "data/sessions"
+	filepath.Walk(path, deleteOldFiles)
+}
+
+func SessionGarbageCollector() {
+	c := time.Tick(time.Minute)
+	for _ = range c {
+		DeleteOldSessions()
+	}
+}
+
 // берем сессию из библиотеки gorillaSession и в итоге получаем нашу прослойку Session уже с четкими
 // типами, а не универсальными
 func GetUserSession(responseWriter http.ResponseWriter, request *http.Request) *Session {
-	gorillaSession := getGorillaSession(request)
-
+	gorillaSession := getGorillaSession(request, false)
 	session := &Session{}
 	session.request = request
 	session.responseWriter = responseWriter
